@@ -23096,7 +23096,7 @@ define('genghis/views/section',[
             _.bindAll(
                 this, 'render', 'updateTitle', 'showAddForm', 'submitAddForm',
                 'closeAddForm', 'updateOnKeyup', 'addModel', 'addModelAndUpdate',
-                'addAll'
+                'addAll', 'onRequest', 'onSync'
             );
 
             if (this.model) {
@@ -23106,6 +23106,8 @@ define('genghis/views/section',[
             if (this.collection) {
                 this.collection.bind('reset', this.render);
                 this.collection.bind('add',   this.addModelAndUpdate);
+                this.collection.bind('request', this.onRequest);
+                this.collection.bind('sync',    this.onSync);
             }
 
             this.render();
@@ -23178,14 +23180,12 @@ define('genghis/views/section',[
         addAll: function() {
             this.$('table tbody').html('');
             this.collection.each(this.addModel);
-
-            this.$el.removeClass('spinning');
         },
 
         show: function() {
             Mousetrap.bind('c', this.showAddForm);
             $('body').addClass('section-' + this.$el.attr('id'));
-            this.$el.addClass('spinning').show();
+            this.$el.show();
             $(document).scrollTop(0);
         },
 
@@ -23193,6 +23193,14 @@ define('genghis/views/section',[
             Mousetrap.unbind('c');
             $('body').removeClass('section-' + this.$el.attr('id'));
             this.$el.hide();
+        },
+
+        onRequest: function() {
+            this.$el.addClass('spinning');
+        },
+
+        onSync: function() {
+            this.$el.removeClass('spinning');
         }
     });
 });
